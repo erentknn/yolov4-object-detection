@@ -1,4 +1,3 @@
-# yolov4-object-detection
 I made a YOLOv4 inference script for both video and image files, easy to use and not complicated. 
 
 
