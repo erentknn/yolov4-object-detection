@@ -36,9 +36,9 @@ CONFIDENCE_THRESHOLD = args["confidence"]
 NMS_THRESHOLD = args["threshold"]
 impath = args["input"]
 
-weights = glob.glob("yolo/*.weights")[1]
+weights = glob.glob("yolo/*.weights")[0]
 labels = glob.glob("yolo/*.txt")[0]
-cfg = glob.glob("yolo/*.cfg")[1]
+cfg = glob.glob("yolo/*.cfg")[0]
 
 print("You are now using {} weights ,{} configs and {} labels.".format(weights, cfg, labels))
 
