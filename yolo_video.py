@@ -59,7 +59,7 @@ layer = net.getLayerNames()
 layer = [layer[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 writer = None
 
-def detect_people(frm, net, ln):
+def detect(frm, net, ln):
     (H, W) = frm.shape[:2]
     blob = cv2.dnn.blobFromImage(frm, 1/255.0, (416, 416),
         swapRB=True, crop=False)
@@ -108,7 +108,7 @@ while cv2.waitKey(1) < 1:
     if not grabbed:
         break
     #frame = imutils.resize(frame, 700)
-    detect_people(frame, net, layer)
+    detect(frame, net, layer)
     
     if args["display"] == 1:
         cv2.imshow("detections", frame)
