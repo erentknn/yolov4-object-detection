@@ -96,7 +96,7 @@ def detect(imgpath, nn):
 			cv2.rectangle(image, (x, y), (x+w, y+h), color, 2)
 			text = "{}: {:.4f}".format(lbls[class_ids[i]], confidences[i])
 			cv2.putText(image, text, (x, y -5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-			label = "Inference Time: {:.2f} ms".format(end_time - start_time)
+			label = "Inference Time: {:.2f} s".format(end_time - start_time)
 			cv2.putText(image, label, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0), 2)
 
 	cv2.imshow("image", image)
