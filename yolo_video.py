@@ -24,8 +24,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    '%(asctime)s-%(name)s-%(message)s')
+formatter = logging.Formatter("%(asctime)s-%(name)s-%(message)s")
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
@@ -47,22 +46,20 @@ parser.add_argument("-c", "--confidence", type=float, default=0.5,
 parser.add_argument("-t", "--threshold", type=float, default=0.4,
                     help="non-maximum supression threshold")
 
-args = vars(parser.parse_args())
+args = parser.parse_args()
 logger.info("Parsed Arguments")
 
-CONFIDENCE_THRESHOLD = args["confidence"]
-NMS_THRESHOLD = args["threshold"]
-if not Path(args["input"]).exists():
-    raise FileNotFoundError(
-        "Path to video file is not exist.")
+CONFIDENCE_THRESHOLD = args.confidence
+NMS_THRESHOLD = args.threshold
+if not Path(args.input).exists():
+    raise FileNotFoundError("Path to video file is not exist.")
 
-vc = cv2.VideoCapture(args["input"])
+vc = cv2.VideoCapture(args.input)
 weights = glob.glob("yolo/*.weights")[0]
 labels = glob.glob("yolo/*.txt")[0]
 cfg = glob.glob("yolo/*.cfg")[0]
 
-logger.info("Using {} weights ,{} configs and {} labels.".format(
-    weights, cfg, labels))
+logger.info("Using {} weights ,{} configs and {} labels.".format(weights, cfg, labels))
 
 class_names = list()
 with open(labels, "r") as f:
@@ -81,8 +78,7 @@ writer = None
 
 def detect(frm, net, ln):
     (H, W) = frm.shape[:2]
-    blob = cv2.dnn.blobFromImage(frm, 1/255.0, (416, 416),
-                                 swapRB=True, crop=False)
+    blob = cv2.dnn.blobFromImage(frm, 1 / 255.0, (416, 416), swapRB=True, crop=False)
     net.setInput(blob)
     start_time = time.time()
     layerOutputs = net.forward(ln)
@@ -100,15 +96,14 @@ def detect(frm, net, ln):
             if confidence > CONFIDENCE_THRESHOLD:
                 box = detection[0:4] * np.array([W, H, W, H])
                 (centerX, centerY, width, height) = box.astype("int")
-                x = int(centerX - (width/2))
-                y = int(centerY - (height/2))
+                x = int(centerX - (width / 2))
+                y = int(centerY - (height / 2))
 
                 boxes.append([x, y, int(width), int(height)])
                 classIds.append(classID)
                 confidences.append(float(confidence))
 
-    idxs = cv2.dnn.NMSBoxes(
-        boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD)
+    idxs = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD)
 
     if len(idxs) > 0:
         for i in idxs.flatten():
@@ -117,30 +112,32 @@ def detect(frm, net, ln):
 
             color = [int(c) for c in COLORS[classIds[i]]]
             cv2.rectangle(frm, (x, y), (x + w, y + h), color, 2)
-            text = "{}: {:.4f}".format(
-                class_names[classIds[i]], confidences[i])
-            cv2.putText(frm, text, (x, y - 5),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            text = "{}: {:.4f}".format(class_names[classIds[i]], confidences[i])
+            cv2.putText(
+                frm, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2
+            )
 
             fps_label = "FPS: %.2f" % (1 / (end_time - start_time))
-            cv2.putText(frm, fps_label, (0, 25),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+            cv2.putText(
+                frm, fps_label, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2
+            )
 
 
 while cv2.waitKey(1) < 1:
     (grabbed, frame) = vc.read()
     if not grabbed:
         break
-    frame = cv2.resize(frame, (args["height"], args["width"]))
+    frame = cv2.resize(frame, (args.height, args.width))
     detect(frame, net, layer)
 
-    if args["display"] == 1:
+    if args.display == 1:
         cv2.imshow("detections", frame)
 
-    if args["output"] != "" and writer is None:
+    if args.output != "" and writer is None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        writer = cv2.VideoWriter(args["output"], fourcc, 25,
-                                 (frame.shape[1], frame.shape[0]), True)
+        writer = cv2.VideoWriter(
+            args.output, fourcc, 25, (frame.shape[1], frame.shape[0]), True
+        )
 
     if writer is not None:
         writer.write(frame)
