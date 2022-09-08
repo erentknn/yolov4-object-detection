@@ -21,8 +21,8 @@ import cv2
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--input", type=str, default="",
-	help="path to (optional) input image file")
+parser.add_argument("-i", "--input", type=str, default="", required=True,
+	help="path to input image file")
 parser.add_argument("-o", "--output", type=str, default="",
 	help="path to (optional) output image file. Write only the name, without extension.")
 parser.add_argument("-c", "--confidence", type=float, default=0.5,
@@ -58,6 +58,8 @@ layer = [layer[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 def detect(imgpath, nn):
     image = cv2.imread(imgpath)
+    assert image is not None, f"Image is none, check file path. Given path is: {imgpath}"
+
     (H, W) = image.shape[:2]
 
     blob = cv2.dnn.blobFromImage(image, 1 / 255, (416, 416), swapRB=True, crop=False)

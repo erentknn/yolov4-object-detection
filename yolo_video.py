@@ -31,7 +31,7 @@ stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--input", type=str, default="",
+parser.add_argument("-i", "--input", type=str, default="", required=True,
                     help="path to input video file")
 parser.add_argument("-o", "--output", type=str, default="",
                     help="path to (optional) output video file")
