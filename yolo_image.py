@@ -52,9 +52,9 @@ net = cv2.dnn.readNetFromDarknet(cfg, weights)
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
+# https://stackoverflow.com/a/69941660
 layer = net.getLayerNames()
-layer = [layer[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-
+layer = [layer[i - 1] for i in net.getUnconnectedOutLayers()]
 
 def detect(imgpath, nn):
     image = cv2.imread(imgpath)
